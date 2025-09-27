@@ -1,0 +1,43 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+
+    "chat:dev": "npm run dev --prefix services/chat",
+    "game:dev": "npm run dev --prefix services/game",
+    "room:dev": "npm run dev --prefix services/room",
+
+    "chat:build": "npm run build -- prefix services/chat",
+    "game:build": "npm run build -- prefix services/game",
+    "room:build": "npm run build -- prefix services/room",
+
+    "chat:prod": "npm start --prefix services/chat",
+    "game:prod": "npm start --prefix services/game",
+    "room:prod": "npm start --prefix services/room",
+
+    "services:dev": "npm-run-all --parallel chat:dev game:dev room:dev",
+    "services:build": "npm-run-all --parallel chat:build game:build room:build",
+    "services:prod":"npm-run-all --parallel chat:prod game:prod room:prod",
+
+    "web:only": "npm start --prefix frontend/web",
+    "cli:only": "npm start --prefix frontend/cli",
+
+    "web:dev": "npm-run-all --parallel services:dev web:only",
+    "web:prod": "npm-run-all --parallel services:prod web:only",
+
+    "cli:dev": "npm-run-all --parallel services:dev cli:only",
+    "cli:prod": "npm-run-all --parallel services:prod cli:only",
+
+
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
