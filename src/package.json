@@ -31,6 +31,14 @@
     "cli:dev": "npm-run-all --parallel services:dev cli:only",
     "cli:prod": "npm-run-all --parallel services:prod cli:only",
 
+    "install:chat": "cd services/chat && npm install",
+    "install:game": "cd services/game && npm install",
+    "install:room": "cd services/room && npm install",
+    "install:cli": "cd frontend/cli && npm install",
+    "install:web": "cd frontend/web && npm install",
+    "install:root": "npm install",
+    "install:all": "npm-run-all --sequential install:chat install:game install:room install:cli install:web install:root",
+
 
     "test": "echo \"Error: no test specified\" && exit 1"
   },
