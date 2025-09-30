@@ -5,6 +5,14 @@ import { gameService } from "./gameService.js";
 const rl = terminal;
 let inRoom = false;
 
+async function handleGameOrMenu(){
+    if(inRoom){
+        await gameService();
+        inRoom = false;
+    }
+    mainMenu();
+}
+
 function mainMenu() {
     console.log("\n=== CLI Game Menu ===");
     console.log("1 - Host Room");
@@ -26,11 +34,13 @@ function mainMenu() {
             case "0":
                 console.log("Exiting...");
                 rl.close();
+                process.exit();
                 return;
             default:
                 console.log("Invalid choice. Try again.");
         }
-        inRoom ? await gameService() : mainMenu();
+
+        await handleGameOrMenu()
     });
 }
 

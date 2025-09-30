@@ -35,3 +35,9 @@ export function setGameAddress(gameAddress) {
     GameAddress = gameAddress;
 }
 
+export function clearAll(){
+    GameAddress = null;
+    UserIdentifierIp = null;
+    RoomRole = null;
+}
+

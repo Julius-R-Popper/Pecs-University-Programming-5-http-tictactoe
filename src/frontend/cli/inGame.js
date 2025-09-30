@@ -12,10 +12,12 @@ function askQuestion(query) {
     return new Promise((resolve) => rl.question(query, resolve));
 }
 
-async function checkGameStatus(){
-    const { result } = await (await fetch(`http://${getGameAddress()}/actions/status`)).json();
-    return result
+async function checkGameStatus() {
+    const statusRes = await fetch(`http://${getGameAddress()}/actions/status`);
+    const { status } = await statusRes.json();
+    return status;
 }
+
 
 async function getBoardInfo(){
     const boardRes = await fetch(`http://${getGameAddress()}/actions/board`);
@@ -37,11 +39,18 @@ export async function beginGame() {
             const { turn } = await turnRes.json();
 
 
-            if (await checkGameStatus() === "finished") {
+            if (await checkGameStatus()) {
                 console.log("Game over!");
+
+                const finalBoard = await getBoardInfo();
+                console.log("\n=== Final Board ===");
+                console.log(finalBoard);
+
                 gameOver = true;
+                await sleep();
                 break;
             }
+
 
             if (turn !== role) {
                 if (waitPrompt) {
@@ -72,18 +81,9 @@ export async function beginGame() {
             const afterPlaced = await getBoardInfo();
             console.log(`You made your move!\n${afterPlaced}`);
 
-
-            if (await checkGameStatus() === "finished") {
-                console.log("Game over!");
-                gameOver = true;
-                break;
-            }
-
         } catch (err) {
             console.error("Error during game loop:", err.message);
             await sleep();
         }
     }
-
-    rl.close();
 }

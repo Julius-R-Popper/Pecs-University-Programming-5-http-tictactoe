@@ -4,6 +4,7 @@ export async function connectRoom() {
     const type = getRoomRole();
     const ip = getUserIdentifierIp();
     const gameServerBase = `http://${getGameAddress()}`;
+    let waitPrompt = true;
 
     try {
         const connectRes = await fetch(`${gameServerBase}/session/connect`, {
@@ -16,7 +17,6 @@ export async function connectRoom() {
 
         console.log("Registered with game server");
 
-        // Step 2: Poll /session until isReady is true
         let lobbyData;
         let isReady = false;
 
@@ -25,17 +25,21 @@ export async function connectRoom() {
             if (!sessionRes.ok) throw new Error(`Failed to get session status: ${sessionRes.status}`);
 
             lobbyData = await sessionRes.json();
-            console.log("Lobby status:", lobbyData);
+            // console.log("Lobby status:", lobbyData);
 
             if (lobbyData.isReady) {
                 isReady = true;
             } else {
-                console.log("Waiting for opponent...");
+                if(waitPrompt){
+                    console.log("Waiting for opponent to join the game server...");
+                    waitPrompt = false;
+                }
                 await new Promise(resolve => setTimeout(resolve, 2000));
             }
         }
-
+        waitPrompt = true;
         console.log("Opponent connected. Ready to start game:", lobbyData);
+
         return lobbyData;
 
     } catch (err) {
