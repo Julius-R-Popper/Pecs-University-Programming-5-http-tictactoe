@@ -1,93 +1,99 @@
-// #!/usr/bin/env node
-//
-// const inquirer = require("inquirer");
-// const axios = require("axios");
-//
-// const BASE_URLS = {
-//   chat: "http://localhost:3001",
-//   game: "http://localhost:3002",
-//   room: "http://localhost:3003",
-// };
-//
-// async function mainMenu() {
-//   const { action } = await inquirer.prompt([
-//     {
-//       type: "list",
-//       name: "action",
-//       message: "What do you want to do?",
-//       choices: [
-//         "Create Room",
-//         "Join Room",
-//         "Make Move",
-//         "Send Chat Message",
-//         "Exit",
-//       ],
-//     },
-//   ]);
-//
-//   switch (action) {
-//     case "Create Room":
-//       await createRoom();
-//       break;
-//     case "Join Room":
-//       await joinRoom();
-//       break;
-//     case "Make Move":
-//       await makeMove();
-//       break;
-//     case "Send Chat Message":
-//       await sendChat();
-//       break;
-//     case "Exit":
-//       process.exit(0);
-//   }
-//
-//   mainMenu();
-// }
-//
-// async function createRoom() {
-//   try {
-//     const res = await axios.post(`${BASE_URLS.room}/create`);
-//     console.log("Room created:", res.data);
-//   } catch (err) {
-//     console.error("Error:", err.message);
-//   }
-// }
-//
-// async function joinRoom() {
-//   try {
-//     const { roomId } = await inquirer.prompt([
-//       { type: "input", name: "roomId", message: "Enter room ID:" },
-//     ]);
-//     const res = await axios.post(`${BASE_URLS.room}/join`, { roomId });
-//     console.log("Joined room:", res.data);
-//   } catch (err) {
-//     console.error("Error:", err.message);
-//   }
-// }
-//
-// async function makeMove() {
-//   try {
-//     const { move } = await inquirer.prompt([
-//       { type: "input", name: "move", message: "Enter your move (e.g. A1):" },
-//     ]);
-//     const res = await axios.post(`${BASE_URLS.game}/move`, { move });
-//     console.log("Move result:", res.data);
-//   } catch (err) {
-//     console.error("Error:", err.message);
-//   }
-// }
-//
-// async function sendChat() {
-//   try {
-//     const { message } = await inquirer.prompt([
-//       { type: "input", name: "message", message: "Enter message:" },
-//     ]);
-//     const res = await axios.post(`${BASE_URLS.chat}/send`, { message });
-//     console.log("Chat sent:", res.data);
-//   } catch (err) {
-//     console.error("Error:", err.message);
-//   }
-// }
-//
-// mainMenu();
+
+import {setGameAddress, setRoomRole, setUserIdentifierIp, terminal} from "./state.js";
+import { gameService } from "./gameService.js";
+
+const rl = terminal;
+let inRoom = false;
+
+function mainMenu() {
+    console.log("\n=== CLI Game Menu ===");
+    console.log("1 - Host Room");
+    console.log("2 - Search Room");
+    console.log("3 - Join Room");
+    console.log("0 - Exit");
+
+    rl.question("Choose an option: ", async (choice) => {
+        switch (choice) {
+            case "1":
+                await hostRoom();
+                break;
+            case "2":
+                await searchRoom();
+                break;
+            case "3":
+                await joinRoomManually();
+                break;
+            case "0":
+                console.log("Exiting...");
+                rl.close();
+                return;
+            default:
+                console.log("Invalid choice. Try again.");
+        }
+        inRoom ? await gameService() : mainMenu();
+    });
+}
+
+async function hostRoom() {
+    try {
+        const res = await fetch("http://localhost:4000/host", {
+            method: "POST"
+        });
+        const data = await res.json();
+        console.log("Room hosted:", data);
+        inRoom = true;
+        setRoomRole("HOST");
+        console.log(data.identifierIp);
+        setUserIdentifierIp(data.identifierIp);
+        console.log(`Address set to ${data.roomIp}:${data.roomPort} for play`);
+        setGameAddress(`${data.roomIp}:${data.roomPort}`)
+    } catch (err) {
+        console.error("Error hosting room:", err.message);
+    }
+}
+
+async function searchRoom() {
+    try {
+        const res = await fetch("http://localhost:4000/search", {
+            method: "GET"
+        });
+        const data = await res.json();
+        console.log("Available rooms:", data);
+    } catch (err) {
+        console.error("Error searching rooms:", err.message);
+    }
+}
+
+async function joinRoomManually() {
+    try {
+        const roomId = await askQuestion("Enter room ID: ");
+        const roomIp = await askQuestion("Enter game server IP: ");
+        const port = await askQuestion("Enter port: ");
+
+        const res = await fetch("http://localhost:4000/join", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                roomId: roomId,
+                roomIp: roomIp,
+                roomPort: Number(port),
+            })
+        });
+        const data = await res.json();
+        console.log("Joined room:", data);
+        inRoom = true;
+        setRoomRole("GUEST");
+        console.log(data.identifierIp);
+        setUserIdentifierIp(data.identifierIp);
+        console.log(`Address set to ${data.roomIp}:${data.roomPort} for play`);
+        setGameAddress(`${data.roomIp}:${data.roomPort}`)
+    } catch (err) {
+        console.error("Error joining room:", err.message);
+    }
+}
+
+function askQuestion(query) {
+    return new Promise((resolve) => rl.question(query, resolve));
+}
+
+mainMenu();

@@ -1,4 +1,4 @@
-import { getSessionHost, getSessionGuest } from "../session/sessionState";
+import { getSessionHost, getSessionGuest } from "../state/sessionState";
 
 let board: (string | null)[] = Array(9).fill(null);
 let currentTurn: "HOST" | "GUEST" = "HOST";
@@ -18,6 +18,14 @@ export function resetBoard() {
 
 export function getBoard() {
     return board;
+}
+
+export function getTurn(){
+    return currentTurn;
+}
+
+export function getGameOver(){
+    return gameOver;
 }
 
 export function checkMove(move: number, ip: string) {

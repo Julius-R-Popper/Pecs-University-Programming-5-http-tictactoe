@@ -1,4 +1,4 @@
-import {getSessionGuest, getSessionHost} from "./sessionState";
+import {getSessionGuest, getSessionHost} from "../state/sessionState";
 
 export function checkIpValidity(ip : string){
     return ip == getSessionHost() || ip == getSessionGuest();

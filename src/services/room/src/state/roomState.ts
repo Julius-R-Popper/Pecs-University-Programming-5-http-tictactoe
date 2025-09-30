@@ -1,40 +1,51 @@
 import { ChildProcess } from "child_process";
 
-export type HostRoom = {
+
+export type RoomPointerHost = {
     roomId: string;
-    port: number;
+    roomIp: string;
+    roomPort: number;
+    identifierIp: string;
     process?: ChildProcess;
-};
+}
 
-export type RemoteRoom = {
+export type RoomPointerGuest = {
     roomId: string;
-    hostIp: string;
-    port: number;
+    roomIp: string;
+    roomPort: number;
+    identifierIp: string;
 }
 
-let hostRoom: HostRoom | null = null;
-let remoteRoom: RemoteRoom | null = null;
-
-export function getHostRoom() {
-    return hostRoom;
+export type DiscoveredRooms = {
+    roomId: string;
+    roomIp: string;
+    roomPort: number;
 }
 
-export function setHostRoom(room: HostRoom | null) {
-    hostRoom = room;
+
+let roomPointerHost: RoomPointerHost | null = null;
+let roomPointerGuest: RoomPointerGuest | null = null;
+
+export function getRoomPointerHost() {
+    return roomPointerHost;
 }
 
-export function clearHostRoom(){
-    hostRoom = null;
+export function setRoomPointerHost(room: RoomPointerHost | null) {
+    roomPointerHost = room;
 }
 
-export function getRemoteRoom() {
-    return remoteRoom;
+export function clearRoomPointerHost() {
+    roomPointerHost = null;
 }
 
-export function setRemoteRoom(room: RemoteRoom | null) {
-    remoteRoom = room;
+export function getRoomPointerGuest() {
+    return roomPointerGuest;
 }
 
-export function clearRemoteRoom(){
-    remoteRoom = null;
+export function setRoomPointerGuest(room: RoomPointerGuest | null) {
+    roomPointerGuest = room;
+}
+
+export function clearRoomPointerGuest() {
+    roomPointerGuest = null;
 }

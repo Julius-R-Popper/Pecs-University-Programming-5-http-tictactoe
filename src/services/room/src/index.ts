@@ -5,6 +5,7 @@ import joinRouter from "./routes/join";
 import closeRouter from "./routes/close"
 import searchRouter from "./routes/search";
 import leaveRouter from "./routes/leave";
+import identifierRouter from "./routes/Identifier";
 
 const app = express();
 const PORT = 4000;
@@ -15,6 +16,7 @@ app.use("/join", joinRouter);
 app.use("/close", closeRouter);
 app.use("/search", searchRouter);
 app.use("/leave", leaveRouter);
+app.use("/identify", identifierRouter)
 
 
 app.listen(PORT, () => {

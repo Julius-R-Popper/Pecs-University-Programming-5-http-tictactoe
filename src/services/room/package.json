@@ -15,6 +15,7 @@
   "dependencies": {
     "express": "^5.1.0",
     "get-port": "^7.1.0",
+    "internal-ip": "^8.0.1",
     "uuid": "^13.0.0"
   },
   "devDependencies": {

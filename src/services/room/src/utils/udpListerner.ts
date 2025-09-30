@@ -1,11 +1,12 @@
 import dgram from "dgram";
-import { RemoteRoom } from "../state/roomState"
 import { MULTICAST_ADDRESS, MULTICAST_PORT } from "../state/multicast";
+import {DiscoveredRooms} from "../state/roomState";
 
 
-export async function getRemoteRooms(timeout: number): Promise<RemoteRoom[]> {
+
+export async function getRemoteRooms(timeout: number): Promise<DiscoveredRooms[]> {
     return new Promise((resolve, reject) => {
-        const discovered: Map<string, RemoteRoom> = new Map();
+        const discovered: Map<string, DiscoveredRooms> = new Map();
         const socket = dgram.createSocket({ type: "udp4", reuseAddr: true });
 
         socket.on("error", (err) => {
@@ -17,13 +18,13 @@ export async function getRemoteRooms(timeout: number): Promise<RemoteRoom[]> {
         socket.on("message", (msg, rinfo) => {
             try {
                 const data = JSON.parse(msg.toString());
-                if (data.roomId && data.port) {
+                if (data.roomId && data.roomPort) {
                     discovered.set(data.roomId, {
                         roomId: data.roomId,
-                        hostIp: rinfo.address,
-                        port: data.port,
+                        roomIp: data.roomIp,
+                        roomPort: data.roomPort,
                     });
-                    console.log("detected address", rinfo.address);
+                    console.log("Detected gaming room address", data.roomIp, ":", data.roomPort, "hosted by", rinfo.address);
                 }
             } catch (err) {
                 console.error("Bad UDP message:", err);

@@ -1,17 +1,17 @@
 let hostIp: string | null = null;
-let remoteIp: string | null = null;
+let guestIp: string | null = null;
 
 export function getSessionHost() {
     return hostIp;
 }
 
 export function getSessionGuest() {
-    return remoteIp;
+    return guestIp;
 }
 
-export function setRemoteIp(ip: string) {
-    if (remoteIp) throw new Error("Remote already connected");
-    remoteIp = ip;
+export function setGuestIp(ip: string) {
+    if (guestIp) throw new Error("Remote already connected");
+    guestIp = ip;
 }
 
 export function setHostIp(ip: string) {
@@ -20,10 +20,10 @@ export function setHostIp(ip: string) {
 }
 
 export function getSession() {
-    return { hostIp, remoteIp };
+    return { hostIp, guestIp };
 }
 
 export function resetSession() {
     hostIp = null;
-    remoteIp = null;
+    guestIp = null;
 }

@@ -1,9 +1,9 @@
 import { Router } from "express";
 import {
     setHostIp,
-    setRemoteIp,
+    setGuestIp,
     getSession,
-} from "./sessionState";
+} from "../state/sessionState";
 
 const router = Router();
 
@@ -17,14 +17,14 @@ router.post("/connect", (req, res) => {
     try {
         if (type === "HOST") {
             setHostIp(ip);
-        } else if (type === "REMOTE") {
-            setRemoteIp(ip);
+        } else if (type === "GUEST") {
+            setGuestIp(ip);
         } else {
             return res.status(400).json({ error: "Invalid type" });
         }
 
         const session = getSession();
-        const isReady = !!(session.hostIp && session.remoteIp);
+        const isReady = !!(session.hostIp && session.guestIp);
 
         return res.json({ session, isReady });
     } catch (err: any) {
@@ -34,6 +34,13 @@ router.post("/connect", (req, res) => {
 
 router.get("/", (req, res) => {
     res.json(getSession());
+});
+
+router.get("/isReady", (req, res) => {
+    const session = getSession();
+    res.json({
+        isReady: !!(session.hostIp && session.guestIp)
+    });
 });
 
 export default router;

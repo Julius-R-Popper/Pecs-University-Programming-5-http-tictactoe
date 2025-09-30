@@ -1,32 +1,37 @@
 import { Router, Request, Response } from "express";
-import {getHostRoom, getRemoteRoom, setRemoteRoom} from "../state/roomState";
+import { getRoomPointerHost, getRoomPointerGuest, setRoomPointerGuest} from "../state/roomState";
 import dgram from "dgram";
 import { MULTICAST_ADDRESS, MULTICAST_PORT } from "../state/multicast";
+import {randomUUID} from "crypto";
 
 const router = Router();
 
 router.post("/", (req: Request, res: Response) => {
-    const { roomId, hostIp, port } = req.body;
+    const { roomId, roomIp, roomPort } = req.body;
 
-    if (!hostIp || !port || !roomId) {
-        return res.status(400).json({ error: "hostIp and port are required" });
+    if (!roomIp || !roomPort || !roomId) {
+        return res.status(400).json({ error: "game server's room IP and port are required" });
     }
 
-    setRemoteRoom({
-        roomId,
-        hostIp,
-        port
+    const identifierIp = randomUUID().slice(0, 3);
+
+    setRoomPointerGuest({
+        roomId: roomId,
+        roomIp: roomIp,
+        roomPort: roomPort,
+        identifierIp: identifierIp
     });
 
     notifyHostStopAdvertising(roomId);
 
-    console.log(`remote room connected to : `, getRemoteRoom());
-    console.log(`host room connected to : `, getHostRoom())
+    console.log(`remote room connected to: ${getRoomPointerGuest()?.roomIp}:${getRoomPointerGuest()?.roomPort}`);
+    console.log(`host room connected to: ${getRoomPointerHost()?.roomIp}:${getRoomPointerHost()?.roomPort}`);
 
     return res.json({
-        message: "Joined room successfully",
-        hostIp,
-        port,
+        message: "Address set successfully. (GUEST)",
+        roomIp: roomIp,
+        roomPort: roomPort,
+        identifierIp: identifierIp
     });
 });
 

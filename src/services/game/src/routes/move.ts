@@ -1,5 +1,6 @@
 import { Router } from "express";
-import {checkMove, getBoard, resetBoard} from "../ruleset/ruleset";
+import {checkMove, getBoard, getGameOver, getTurn, resetBoard} from "../util/ruleset";
+import {formatBoard} from "../util/formatBoard";
 
 const router = Router();
 
@@ -18,14 +19,19 @@ router.post("/move", (req, res) => {
     }
 });
 
+
+
 router.get("/board", (req, res) => {
     try {
         const result = getBoard();
-        res.json(result);
+        res.json({
+            board: formatBoard(result)
+        });
     } catch (err: any) {
         res.status(400).json({ error: err.message });
     }
 });
+
 
 router.post("/restart", (req, res) => {
     try {
@@ -36,6 +42,30 @@ router.post("/restart", (req, res) => {
         res.status(400).json({ error: err.message });
     }
 });
+
+router.get("/status", (req, res) => {
+    try{
+        const status = getGameOver();
+        res.json({
+            status: status
+        });
+    } catch (err: any) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+router.get("/turn", (req, res) => {
+    try{
+        const turn = getTurn();
+        res.json({
+            turn: turn
+        });
+    } catch (err: any) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+
 
 
 export default router;
