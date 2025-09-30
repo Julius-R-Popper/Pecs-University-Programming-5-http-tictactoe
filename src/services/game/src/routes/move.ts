@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {checkMove, getBoard, getGameOver, getTurn, resetBoard} from "../util/ruleset";
-import {formatBoard} from "../util/formatBoard";
 
 const router = Router();
 
@@ -25,7 +24,7 @@ router.get("/board", (req, res) => {
     try {
         const result = getBoard();
         res.json({
-            board: formatBoard(result)
+            board: result
         });
     } catch (err: any) {
         res.status(400).json({ error: err.message });

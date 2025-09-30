@@ -1,4 +1,5 @@
 import express from "express";
+import cors from 'cors';
 
 import hostRouter from "./routes/host";
 import joinRouter from "./routes/join";
@@ -10,7 +11,10 @@ import identifierRouter from "./routes/Identifier";
 const app = express();
 const PORT = 4000;
 
+
+app.use(cors());
 app.use(express.json());
+
 app.use("/host", hostRouter);
 app.use("/join", joinRouter);
 app.use("/close", closeRouter);

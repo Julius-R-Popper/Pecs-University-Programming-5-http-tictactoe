@@ -1,0 +1,17 @@
+.lobby-container {
+  padding: 20px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.debug-lobby {
+  margin-top: 10px;
+  background: #f4f4f4;
+  padding: 10px;
+  border-radius: 6px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 0.9rem;
+  color: #333;
+}

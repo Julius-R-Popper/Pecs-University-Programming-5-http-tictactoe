@@ -1,0 +1,30 @@
+<div class="menu-container">
+  <h2>Tic Tac Toe</h2>
+
+  <div class="buttons">
+    <button (click)="hostRoom()">Host Room</button>
+    <button (click)="searchRoom()">Search Rooms</button>
+  </div>
+
+  <div class="join-room">
+    <h3>Join Room Manually</h3>
+    <input placeholder="Room ID" [(ngModel)]="roomIdInput" />
+    <input placeholder="Game IP" [(ngModel)]="roomIpInput" />
+    <input placeholder="Port" type="number" [(ngModel)]="roomPortInput" />
+    <button (click)="joinRoomManually()">Join Room</button>
+  </div>
+
+  @if (loading()) {
+    <p>Searching for available rooms...</p>
+  } @else {
+    @if (availableRooms().length > 0) {
+      <ul>
+        @for (room of availableRooms(); track room.roomId) {
+          <li>{{ room.roomId }} - {{ room.roomIp }}:{{ room.roomPort }}</li>
+        }
+      </ul>
+    } @else {
+      <p>No available rooms found.</p>
+    }
+  }
+</div>

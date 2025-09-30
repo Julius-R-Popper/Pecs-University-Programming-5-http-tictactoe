@@ -1,0 +1,54 @@
+.game-container {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.status-message {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+  min-height: 1.5em; /* prevents layout jump */
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 60px);
+  grid-template-rows: repeat(3, 60px);
+  gap: 5px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.cell {
+  width: 60px;
+  height: 60px;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #fff;
+  border: 2px solid #333;
+  border-radius: 6px;
+  box-sizing: border-box;
+  cursor: pointer; /* pointer on clickable cells */
+  transition: background-color 0.2s;
+}
+
+.cell:disabled {
+  background-color: #eee;
+  cursor: not-allowed;
+}
+
+.cell:hover:enabled {
+  background-color: #f0f0f0; /* subtle hover effect on active cells */
+}
+
+.game-over-message {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #d9534f; /* red-ish for emphasis */
+  margin-top: 20px;
+}

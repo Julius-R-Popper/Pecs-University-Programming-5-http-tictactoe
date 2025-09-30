@@ -1,0 +1,15 @@
+<div class="lobby-container">
+  <p>{{ waitingMessage() }}</p>
+
+  @if (!opponentConnected()) {
+    <p>Lobby is waiting...</p>
+  } @else {
+    <p>Ready! Redirecting to game...</p>
+  }
+
+  @if (lobbyData()) {
+    <div class="debug-lobby">
+      <pre>{{ lobbyData() | json }}</pre>
+    </div>
+  }
+</div>

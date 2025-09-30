@@ -1,0 +1,18 @@
+<div class="game-container">
+  <p class="status-message">{{ statusMessage() }}</p>
+
+  <div class="board">
+    @for (cell of board(); track $index) {
+      <button
+        class="cell"
+        [disabled]="cell !== null || !isMyTurn() || gameOver()"
+        (click)="makeMove($index)">
+        {{ cell ?? '' }}
+      </button>
+    }
+  </div>
+
+  @if (gameOver()) {
+    <p class="game-over-message">Game over! Redirecting to main menu...</p>
+  }
+</div>
