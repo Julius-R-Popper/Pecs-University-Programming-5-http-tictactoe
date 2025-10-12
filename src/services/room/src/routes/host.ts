@@ -12,7 +12,9 @@ const router = Router();
 
 router.post("/", async (req, res) => {
     try{
-        const gamePort = await getPort({ port: 3001 });
+        const basePort = 3001;
+        const gamePort = await getPort({ port: basePort });
+        const rulesetPort = await getPort({ port: basePort + 1 });
 
         const roomId = randomUUID().slice(0, 3);
 
@@ -20,7 +22,7 @@ router.post("/", async (req, res) => {
 
         const identifierIp = randomUUID().slice(0, 3);//getLocalLanIp();
 
-        const child = spawn(
+        const gameProcess = spawn(
             "node",
             ["-r", "ts-node/register", "src/index.ts"],
             {
@@ -30,11 +32,22 @@ router.post("/", async (req, res) => {
             }
         );
 
+        const rulesetProcess = spawn(
+            "node",
+            ["-r", "ts-node/register", "src/index.ts"],
+            {
+                cwd: "../ruleset",
+                env: { ...process.env, PORT: rulesetPort.toString(), HOST: hostIp },
+                stdio: "inherit",
+            }
+        );
+
         setRoomPointerHost({
             roomId: roomId,
             roomIp: hostIp,
             roomPort: gamePort,
-            process: child,
+            gameProcess: gameProcess,
+            rulesetProcess: rulesetProcess,
             identifierIp: identifierIp//hostIp
         })
 

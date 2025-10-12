@@ -11,16 +11,25 @@ router.post("/", (req, res) => {
     }
 
     try {
-        if (hostRoom.process && !hostRoom.process.killed) {
-            // Attach a one-time exit listener
-            hostRoom.process.once("exit", (code, signal) => {
+        if (hostRoom.gameProcess && !hostRoom.gameProcess.killed) {
+            hostRoom.gameProcess.once("exit", (code, signal) => {
                 console.log(`Game server exited with code ${code}, signal ${signal}`);
                 clearRoomPointerHost();
                 res.json({ message: "Room closed successfully." });
             });
+            hostRoom.gameProcess.kill();
+        } else {
+            clearRoomPointerHost();
+            res.json({ message: "Room already stopped." });
+        }
 
-            // Kill the process
-            hostRoom.process.kill();
+        if (hostRoom.rulesetProcess && !hostRoom.rulesetProcess.killed) {
+            hostRoom.rulesetProcess.once("exit", (code, signal) => {
+                console.log(`Ruleset server exited with code ${code}, signal ${signal}`);
+                clearRoomPointerHost();
+                res.json({ message: "Ruleset Server closed successfully." });
+            });
+            hostRoom.rulesetProcess.kill();
         } else {
             clearRoomPointerHost();
             res.json({ message: "Room already stopped." });

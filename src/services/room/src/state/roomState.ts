@@ -6,7 +6,8 @@ export type RoomPointerHost = {
     roomIp: string;
     roomPort: number;
     identifierIp: string;
-    process?: ChildProcess;
+    gameProcess?: ChildProcess;
+    rulesetProcess?: ChildProcess;
 }
 
 export type RoomPointerGuest = {
