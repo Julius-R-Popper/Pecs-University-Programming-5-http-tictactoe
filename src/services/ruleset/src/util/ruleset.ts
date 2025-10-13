@@ -1,6 +1,6 @@
 let board: (string | null)[] = Array(9).fill(null);
 let currentTurn: "HOST" | "GUEST" = "HOST";
-let gameOver = false;
+let isGameOver = false;
 
 const WINNING_COMBOS: [number, number, number][] = [
     [0,1,2], [3,4,5], [6,7,8],
@@ -11,7 +11,7 @@ const WINNING_COMBOS: [number, number, number][] = [
 export function resetBoard() {
     board = Array(9).fill(null);
     currentTurn = "HOST";
-    gameOver = false;
+    isGameOver = false;
 }
 
 export function getBoard() {
@@ -23,7 +23,7 @@ export function getTurn(){
 }
 
 export function getGameOver(){
-    return gameOver;
+    return isGameOver;
 }
 
 function validateMove(move : number){
@@ -36,9 +36,9 @@ function applyMove(move : number){
 }
 
 
-export function makeMove(move: number, playerSocketId: string) {
+export function makeMove(move: number) {
 
-    if (gameOver) {
+    if (isGameOver) {
         throw new Error("Game is over");
     }
 
@@ -50,29 +50,28 @@ export function makeMove(move: number, playerSocketId: string) {
     const isDraw = !winner && board.every(cell => cell !== null);
 
     const result: any = {
-        board,
-        move,
+        board: board,
+        move: move,
         by: currentTurn,
         nextTurn: null,
         winner: null,
         isDraw: false,
-        gameOver: false,
+        isGameOver: false,
     };
 
     if (winner) {
 
         result.winner = currentTurn;
-        result.gameOver = true;
-        gameOver = true;
+        result.isGameOver= true;
+        isGameOver = true;
 
     } else if (isDraw) {
 
         result.isDraw = true;
-        result.gameOver = true;
-        gameOver = true;
+        result.isGameOver = true;
+        isGameOver = true;
 
     } else {
-
         currentTurn = currentTurn === "HOST" ? "GUEST" : "HOST";
         result.nextTurn = currentTurn;
     }

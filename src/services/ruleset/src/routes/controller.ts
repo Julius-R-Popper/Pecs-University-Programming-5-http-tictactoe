@@ -4,31 +4,35 @@ import {getBoard, getGameOver, getTurn, makeMove} from "../util/ruleset";
 const router = Router();
 
 router.post("/makeMove", async (req, res) => {
-    const { move, playerSocketId } = req.body;
+    const { move } = req.body;
+
+    if (!move ) {
+        return res.status(400).json({ error: "Missing move" });
+    }
 
     try {
-         const result = makeMove(move, playerSocketId);
+         const result = makeMove(move);
          res.json(result);
-    } catch (error){
+    } catch (error : any){
          console.error(error);
-         res.status(500).json({ error: "Failed to apply move" });
+         res.status(400).json({ error: error.message });
     }
 });
 
 router.get("/getTurn", async (req, res) => {
     try{
-        const result = getTurn();
-        res.json(result);
+        const turn = getTurn();
+        res.json(turn);
     } catch (error){
         console.error(error);
         res.status(500).json({ error: "Failed to get Turn" });
     }
 });
 
-router.get("/getGameOver", async (req, res) => {
+router.get("/isGameOver", async (req, res) => {
     try{
-        const result = getGameOver();
-        res.json(result);
+        const isGameOver = getGameOver();
+        res.json(isGameOver);
     } catch (error){
         console.error(error);
         res.status(500).json({ error: "Failed to get Game Over" });
@@ -37,11 +41,11 @@ router.get("/getGameOver", async (req, res) => {
 
 router.get("/getBoard", async (req, res) => {
     try{
-        const result = getBoard();
-        res.json(result);
-    } catch (error){
+        const board = getBoard();
+        res.json(board);
+    } catch (error : any){
         console.error(error);
-        res.status(500).json({ error: "Failed to get Board" });
+        res.status(400).json({ error: error.message });
     }
 });
 

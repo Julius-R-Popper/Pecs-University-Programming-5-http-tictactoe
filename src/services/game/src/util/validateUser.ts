@@ -9,7 +9,7 @@ export function validateSocketId(playerSocketId: string){
 
 export async function validateCurrentTurn(playerSocketId : string){
     try{
-        const response = await fetch(`http://${HOST}:${PORT + 1}/getTurn`);
+        const response = await fetch(`http://${HOST}:${PORT + 1}/session/getTurn`);
         if (!response.ok) {
             const errData = await response.json();
             throw new Error(errData.error || "Failed to fetch current turn");

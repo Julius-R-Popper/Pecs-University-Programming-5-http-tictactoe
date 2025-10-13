@@ -25,9 +25,15 @@ function joinGame(io: Server<DefaultEventsMap, DefaultEventsMap>) {
 
 export async function handleMove(socket: Socket<DefaultEventsMap, DefaultEventsMap>, move: number, io: Server<DefaultEventsMap, DefaultEventsMap>) {
     try {
+
+        //make sure that socket is either guest or host
         validateSocketId(socket.id);
+
+        //make sure that the socket is the current turn's socket id
         await validateCurrentTurn(socket.id);
-        const response = await fetch(`http://${HOST}:${PORT + 1}/makeMove`, {
+
+
+        const response = await fetch(`http://${HOST}:${PORT + 1}/session/makeMove`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -43,7 +49,8 @@ export async function handleMove(socket: Socket<DefaultEventsMap, DefaultEventsM
 
         const result = await response.json();
 
-        io.emit("move-result", result);
+        io.emit("move-success", result);
+
     } catch (err: any) {
         socket.emit("error-message", { error: err.message });
     }
@@ -53,5 +60,5 @@ export function handleDisconnect(socket: Socket, io: Server<DefaultEventsMap, De
     console.log(`Disconnected: ${socket.id}`);
     if (players.hostSocketId === socket.id) players.hostSocketId = null;
     if (players.guestSocketId === socket.id) players.guestSocketId = null;
-    io.emit("player-disconnected", { id: socket.id });
+    io.emit("disconnect-success", { id: socket.id });
 }

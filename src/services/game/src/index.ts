@@ -16,11 +16,11 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
 
-    socket.on("join", (data) => handleJoin(socket, data, io));
+    socket.on("player-join", (data) => handleJoin(socket, data, io));
 
     socket.on("player-move", (data) => handleMove(socket, data, io));
 
-    socket.on("disconnect", () => handleDisconnect(socket, io))
+    socket.on("player-disconnect", () => handleDisconnect(socket, io))
 
 })
 
