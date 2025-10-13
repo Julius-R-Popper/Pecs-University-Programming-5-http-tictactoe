@@ -30,7 +30,10 @@ export async function handleMove(socket: Socket<DefaultEventsMap, DefaultEventsM
         const response = await fetch(`http://${HOST}:${PORT + 1}/makeMove`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ move, playerSocketId: socket.id })
+            body: JSON.stringify({
+                move: move,
+                playerSocketId: socket.id
+            })
         });
 
         if (!response.ok) {
