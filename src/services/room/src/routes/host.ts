@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
 
         const hostIp = getLocalLanIp();
 
-        const identifierIp = randomUUID().slice(0, 3);//getLocalLanIp();
+        const identifierId = randomUUID().slice(0, 3);//getLocalLanIp();
 
         const gameProcess = spawn(
             "node",
@@ -48,7 +48,7 @@ router.post("/", async (req, res) => {
             roomPort: gamePort,
             gameProcess: gameProcess,
             rulesetProcess: rulesetProcess,
-            identifierIp: identifierIp//hostIp
+            identifierId: identifierId
         })
 
         startAdvertising(roomId, gamePort, hostIp);
@@ -58,7 +58,7 @@ router.post("/", async (req, res) => {
             roomId: roomId,
             roomPort: gamePort,
             roomIp: hostIp,
-            identifierIp: identifierIp
+            identifierId: identifierId
         });
 
     } catch (error) {

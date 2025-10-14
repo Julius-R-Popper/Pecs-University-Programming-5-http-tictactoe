@@ -5,7 +5,7 @@ export type RoomPointerHost = {
     roomId: string;
     roomIp: string;
     roomPort: number;
-    identifierIp: string;
+    identifierId: string;
     gameProcess?: ChildProcess;
     rulesetProcess?: ChildProcess;
 }
@@ -14,7 +14,7 @@ export type RoomPointerGuest = {
     roomId: string;
     roomIp: string;
     roomPort: number;
-    identifierIp: string;
+    identifierId: string;
 }
 
 export type DiscoveredRooms = {
