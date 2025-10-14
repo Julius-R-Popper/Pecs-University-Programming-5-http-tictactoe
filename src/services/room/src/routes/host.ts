@@ -9,12 +9,11 @@ import getPort from "get-port";
 const router = Router();
 
 
-
 router.post("/", async (req, res) => {
     try{
-        const basePort = 3001;
-        const gamePort = await getPort({ port: basePort });
-        const rulesetPort = await getPort({ port: basePort + 1 });
+
+        const gamePort = await getPort();
+        const rulesetPort = await getPort();
 
         const roomId = randomUUID().slice(0, 3);
 
@@ -22,12 +21,15 @@ router.post("/", async (req, res) => {
 
         const identifierId = randomUUID().slice(0, 3);//getLocalLanIp();
 
+        console.log("game port on", gamePort.toString())
+        console.log("ruleset port on", rulesetPort.toString())
+
         const gameProcess = spawn(
             "node",
             ["-r", "ts-node/register", "src/index.ts"],
             {
                 cwd: "../game",
-                env: { ...process.env, PORT: gamePort.toString(), HOST: hostIp },
+                env: { ...process.env, PORT: gamePort.toString(), HOST: hostIp, RULESET_PORT: rulesetPort.toString() },
                 stdio: "inherit",
             }
         );

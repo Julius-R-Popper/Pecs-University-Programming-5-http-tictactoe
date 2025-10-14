@@ -16,7 +16,7 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
 
-    socket.on("player-join", (data) => handleJoin(socket, data, io));
+    socket.on("player-join", (role) => handleJoin(socket, role, io));
 
     socket.on("player-move", (data) => handleMove(socket, data, io));
 
@@ -34,6 +34,7 @@ app.use(express.json());
 
 export const PORT = Number(process.env.PORT) || 3001;
 export const HOST = process.env.HOST || "0.0.0.0";
+export const RULESET_PORT = Number(process.env.RULESET_PORT) || 3002;
 
 server.listen(PORT, HOST, () => {
     console.log(`Game service running on https://${HOST}:${PORT}`);

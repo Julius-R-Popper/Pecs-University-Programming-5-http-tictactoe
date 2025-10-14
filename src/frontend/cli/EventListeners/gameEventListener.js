@@ -1,4 +1,4 @@
-import {RoomRole, SocketConnection, terminal,} from "../state.js";
+import {getRoomRole, getSocketConnection, terminal,} from "../state.js";
 
 const rl = terminal;
 
@@ -28,7 +28,7 @@ async function inputMove(){
         console.log("Invalid move. Try again.");
     }
 
-    SocketConnection.emit("player-move", {move: Number(move)});
+    getSocketConnection().emit("player-move", {move: Number(move)});
 
     console.log(`You placed: ${move}`);
 }
@@ -51,10 +51,11 @@ export async function establishGameEventListener(){
     return new Promise(async (resolve) => {
 
         console.log(formatBoard(Array(9).fill(null)));
-        if (RoomRole === "HOST") await inputMove();
-        else if (RoomRole === "GUEST") waitForOpponent();
+        if (getRoomRole() === "HOST") await inputMove();
+        else if (getRoomRole() === "GUEST") waitForOpponent();
 
-        SocketConnection.on("move-success", async (gameStatus) => {
+
+        getSocketConnection().on("move-success", async (gameStatus) => {
 
             await printStatus(gameStatus);
 
@@ -63,12 +64,12 @@ export async function establishGameEventListener(){
                 if(gameStatus.winner) console.log(`Winner: ${gameStatus.winner}`);
                 else if(gameStatus.isDraw) console.log("Draw!");
 
-                SocketConnection.emit("player-disconnect");
+                getSocketConnection().emit("player-disconnect");
                 resolve();
                 return;
             }
 
-            if(RoomRole === gameStatus.nextTurn) {
+            if(getRoomRole() === gameStatus.nextTurn) {
                 await inputMove();
             }else{
                 waitForOpponent();

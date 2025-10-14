@@ -1,5 +1,5 @@
 import {players} from "../state/state";
-import {HOST, PORT} from "../index";
+import {HOST, RULESET_PORT} from "../index";
 
 export function validateSocketId(playerSocketId: string){
     if (playerSocketId !== players.hostSocketId && playerSocketId !== players.guestSocketId) {
@@ -9,7 +9,7 @@ export function validateSocketId(playerSocketId: string){
 
 export async function validateCurrentTurn(playerSocketId : string){
     try{
-        const response = await fetch(`http://${HOST}:${PORT + 1}/session/getTurn`);
+        const response = await fetch(`http://${HOST}:${RULESET_PORT}/session/getTurn`);
         if (!response.ok) {
             const errData = await response.json();
             throw new Error(errData.error || "Failed to fetch current turn");

@@ -1,7 +1,7 @@
 import {DefaultEventsMap, Server, Socket} from "socket.io";
 import {players} from "../state/state";
 import { validateSocketId, validateCurrentTurn } from "../util/validateUser"
-import {HOST, PORT} from "../index";
+import {HOST, RULESET_PORT} from "../index";
 
 export function handleJoin(socket: Socket<DefaultEventsMap, DefaultEventsMap>, {role}: any, io: Server<DefaultEventsMap, DefaultEventsMap>){
 
@@ -13,7 +13,7 @@ export function handleJoin(socket: Socket<DefaultEventsMap, DefaultEventsMap>, {
         players.guestSocketId = socket.id;
     }
 
-    socket.emit("join-success", { id: socket.id, role });
+    socket.emit("join-success", { id: socket.id, role: role });
 
     if(players.hostSocketId && players.guestSocketId) joinGame(io);
 }
@@ -33,7 +33,7 @@ export async function handleMove(socket: Socket<DefaultEventsMap, DefaultEventsM
         await validateCurrentTurn(socket.id);
 
 
-        const response = await fetch(`http://${HOST}:${PORT + 1}/session/makeMove`, {
+        const response = await fetch(`http://${HOST}:${RULESET_PORT}/session/makeMove`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

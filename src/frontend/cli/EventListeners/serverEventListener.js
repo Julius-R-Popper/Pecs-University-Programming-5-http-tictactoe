@@ -1,45 +1,55 @@
 import { io } from "socket.io-client";
-import {GameAddress, RoomRole, SocketConnection} from "../state.js";
+import {
+    getGameAddress,
+    getRoomRole,
+    getSocketConnection,
+    setGameAddress,
+    setRoomRole,
+    setSocketConnection
+} from "../state.js";
+
 
 
 export async function establishServerEventListener() {
     return new Promise((resolve) => {
-        const role = RoomRole;
+        const role = getRoomRole();
 
-        SocketConnection = io(`http://${GameAddress}`);
+        console.log(`My role is ${role}`);
 
-        SocketConnection.emit("player-join", role );
+        setSocketConnection(io(`http://${getGameAddress()}`));
 
-        SocketConnection.on("join-success", (data) => {
+        getSocketConnection().emit("player-join", { role } );
+
+        getSocketConnection().on("join-success", (data) => {
             console.log(`Successfully joined as ${data.role} (${data.id})`);
         });
 
-        SocketConnection.on("game-start", async (data) => {
+        getSocketConnection().on("game-start", async (data) => {
             console.log(data.message);
             resolve();
         });
 
-        SocketConnection.on("error-message", (err) => {
+        getSocketConnection().on("error-message", (err) => {
             console.error("Server error:", err.error);
         });
 
-        SocketConnection.on("disconnect-success", async () => {
+        getSocketConnection().on("disconnect-success", async () => {
             console.log("Disconnected from game server");
 
-            SocketConnection.off();
-            SocketConnection.close();
-            SocketConnection = null;
+            getSocketConnection().off();
+            getSocketConnection().close();
+            setSocketConnection(null);
 
             await endGameServer();
 
-            GameAddress = null;
-            RoomRole = null;
+            setGameAddress(null);
+            setRoomRole(null);
         });
     })
 }
 
 async function endGameServer() {
-    const role = RoomRole;
+    const role = getRoomRole();
 
     try {
         if (role === "GUEST") {

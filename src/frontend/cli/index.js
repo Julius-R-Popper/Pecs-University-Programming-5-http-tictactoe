@@ -1,5 +1,5 @@
 
-import {GameAddress, RoomRole, terminal} from "./state.js";
+import {setGameAddress, setRoomRole, state, terminal} from "./state.js";
 import {establishServerEventListener} from "./EventListeners/serverEventListener.js";
 import {establishGameEventListener} from "./EventListeners/gameEventListener.js";
 
@@ -55,9 +55,9 @@ async function hostRoom() {
         const hostRoomData = await res.json();
         console.log("Room hosted:", hostRoomData);
         inRoom = true;
-        RoomRole = "HOST";
+        setRoomRole("HOST");
         console.log(`Address set to ${hostRoomData.roomIp}:${hostRoomData.roomPort} for play`);
-        GameAddress = `${hostRoomData.roomIp}:${hostRoomData.roomPort}`
+        setGameAddress(`${hostRoomData.roomIp}:${hostRoomData.roomPort}`);
     } catch (err) {
         console.error("Error hosting room:", err.message);
     }
@@ -93,9 +93,9 @@ async function joinRoomManually() {
         const data = await res.json();
         console.log("Joined room:", data);
         inRoom = true;
-        RoomRole = "GUEST";
+        setRoomRole("GUEST");
         console.log(`Address set to ${data.roomIp}:${data.roomPort} for play`);
-        GameAddress = `${data.roomIp}:${data.roomPort}`;
+        setGameAddress(`${data.roomIp}:${data.roomPort}`);
 
     } catch (err) {
         console.error("Error joining room:", err.message);
