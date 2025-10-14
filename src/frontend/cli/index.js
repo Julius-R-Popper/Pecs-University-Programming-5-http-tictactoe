@@ -12,6 +12,7 @@ async function handleGameOrMenu(){
         await establishServerEventListener();
         await establishGameEventListener();
         inRoom = false;
+        console.log("Disconnected from the game server.")
     }
     mainMenu();
 }

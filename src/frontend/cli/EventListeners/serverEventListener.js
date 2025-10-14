@@ -34,7 +34,7 @@ export async function establishServerEventListener() {
         });
 
         getSocketConnection().on("disconnect-success", async () => {
-            console.log("Disconnected from game server");
+            //console.log("Disconnected from game server");
 
             getSocketConnection().off();
             getSocketConnection().close();
@@ -61,7 +61,7 @@ async function endGameServer() {
                 throw new Error(`Failed to leave room: ${res.status}`);
             }
 
-            console.log("You left the room successfully.");
+            //console.log("You left the room successfully.");
         } else if (role === "HOST") {
             const res = await fetch("http://localhost:4000/close", {
                 method: "POST"
@@ -71,7 +71,7 @@ async function endGameServer() {
                 throw new Error(`Failed to close room: ${res.status}`);
             }
 
-            console.log("You closed the room and stopped the game server.");
+            //console.log("You closed the room and stopped the game server.");
         } else {
             console.log("No valid role found — nothing to end.");
         }

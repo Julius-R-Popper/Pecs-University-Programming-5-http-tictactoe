@@ -18,7 +18,7 @@ io.on("connection", (socket) => {
 
     socket.on("player-join", (role) => handleJoin(socket, role, io));
 
-    socket.on("player-move", (data) => handleMove(socket, data, io));
+    socket.on("player-move", (move) => handleMove(socket, move, io));
 
     socket.on("player-disconnect", () => handleDisconnect(socket, io))
 

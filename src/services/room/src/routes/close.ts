@@ -1,44 +1,49 @@
 import { Router } from "express";
 import { getRoomPointerHost, clearRoomPointerHost } from "../state/roomState";
+import { ChildProcess } from "child_process";
 
 const router = Router();
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
     const hostRoom = getRoomPointerHost();
 
     if (!hostRoom) {
-        return res.status(404).json({ error: "No hosted room found." });
+        return res.status(404).json({error: "No hosted room found."});
     }
 
     try {
-        if (hostRoom.gameProcess && !hostRoom.gameProcess.killed) {
-            hostRoom.gameProcess.once("exit", (code, signal) => {
-                console.log(`Game server exited with code ${code}, signal ${signal}`);
-                clearRoomPointerHost();
-                res.json({ message: "Room closed successfully." });
+        const closeProcess = (process: ChildProcess | undefined, name: string) => {
+            return new Promise((resolve) => {
+                if (process && !process.killed) {
+                    process.once("exit", (code, signal) => {
+                        console.log(`${name} exited with code ${code}, signal ${signal}`);
+                        resolve({ name, status: "closed", code, signal });
+                    });
+                    process.kill();
+                } else {
+                    resolve({ name, status: "already stopped" });
+                }
             });
-            hostRoom.gameProcess.kill();
-        } else {
-            clearRoomPointerHost();
-            res.json({ message: "Room already stopped." });
-        }
+        };
 
-        if (hostRoom.rulesetProcess && !hostRoom.rulesetProcess.killed) {
-            hostRoom.rulesetProcess.once("exit", (code, signal) => {
-                console.log(`Ruleset server exited with code ${code}, signal ${signal}`);
-                clearRoomPointerHost();
-                res.json({ message: "Ruleset Server closed successfully." });
-            });
-            hostRoom.rulesetProcess.kill();
-        } else {
-            clearRoomPointerHost();
-            res.json({ message: "Room already stopped." });
-        }
+        // Wait for both the game and ruleset processes to close
+        const results = await Promise.all([
+            closeProcess(hostRoom.gameProcess, "Game server"),
+            closeProcess(hostRoom.rulesetProcess, "Ruleset server"),
+        ]);
+
+        clearRoomPointerHost();
+
+        res.json({
+            message: "Room closed successfully.",
+            details: results,
+        });
     } catch (error) {
         console.error("Error closing room:", error);
         res.status(500).json({ error: "Failed to close the room." });
     }
 });
+
 
 
 export default router;

@@ -23,7 +23,7 @@ function joinGame(io: Server<DefaultEventsMap, DefaultEventsMap>) {
     io.emit("game-start", { message: "Both players connected!" })
 }
 
-export async function handleMove(socket: Socket<DefaultEventsMap, DefaultEventsMap>, move: number, io: Server<DefaultEventsMap, DefaultEventsMap>) {
+export async function handleMove(socket: Socket<DefaultEventsMap, DefaultEventsMap>, {move}: any, io: Server<DefaultEventsMap, DefaultEventsMap>) {
     try {
 
         //make sure that socket is either guest or host
