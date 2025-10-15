@@ -13,13 +13,13 @@ router.post("/", (req: Request, res: Response) => {
         return res.status(400).json({ error: "game server's room IP and port are required" });
     }
 
-    const identifierIp = randomUUID().slice(0, 3);
+    const identifierId = randomUUID().slice(0, 3);
 
     setRoomPointerGuest({
         roomId: roomId,
         roomIp: roomIp,
         roomPort: roomPort,
-        identifierIp: identifierIp
+        identifierId: identifierId
     });
 
     notifyHostStopAdvertising(roomId);
@@ -31,7 +31,7 @@ router.post("/", (req: Request, res: Response) => {
         message: "Address set successfully. (GUEST)",
         roomIp: roomIp,
         roomPort: roomPort,
-        identifierIp: identifierIp
+        identifierId: identifierId
     });
 });
 

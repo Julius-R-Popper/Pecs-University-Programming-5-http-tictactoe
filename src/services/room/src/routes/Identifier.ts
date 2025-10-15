@@ -17,11 +17,11 @@ router.get("/role", async (req, res) => {
 });
 
 function getHost(): string | undefined {
-    return getRoomPointerHost()?.identifierIp;
+    return getRoomPointerHost()?.identifierId;
 }
 
 function getGuest(): string | undefined {
-    return getRoomPointerGuest()?.identifierIp;
+    return getRoomPointerGuest()?.identifierId;
 }
 
 export default router;

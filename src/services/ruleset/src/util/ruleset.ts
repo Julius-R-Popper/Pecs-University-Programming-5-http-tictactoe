@@ -1,8 +1,6 @@
-import { getSessionHost, getSessionGuest } from "../state/sessionState";
-
 let board: (string | null)[] = Array(9).fill(null);
 let currentTurn: "HOST" | "GUEST" = "HOST";
-let gameOver = false;
+let isGameOver = false;
 
 const WINNING_COMBOS: [number, number, number][] = [
     [0,1,2], [3,4,5], [6,7,8],
@@ -13,7 +11,7 @@ const WINNING_COMBOS: [number, number, number][] = [
 export function resetBoard() {
     board = Array(9).fill(null);
     currentTurn = "HOST";
-    gameOver = false;
+    isGameOver = false;
 }
 
 export function getBoard() {
@@ -25,56 +23,54 @@ export function getTurn(){
 }
 
 export function getGameOver(){
-    return gameOver;
+    return isGameOver;
 }
 
-export function checkMove(move: number, ip: string) {
-    if (gameOver) {
+function validateMove(move : number){
+    if (move < 1 || move > 9) throw new Error("Move must be 1-9");
+    if (board[move - 1]) throw new Error("Cell already taken");
+}
+
+function applyMove(move : number){
+    board[move - 1] = currentTurn === "HOST" ? "X" : "O";
+}
+
+
+export function makeMove(move: number) {
+
+    if (isGameOver) {
         throw new Error("Game is over");
     }
 
-    const hostIp = getSessionHost();
-    const guestIp = getSessionGuest();
-
-    // Validate IP
-    if (ip !== hostIp && ip !== guestIp) {
-        throw new Error("Invalid IP");
-    }
-
-    // Validate turn
-    if (currentTurn === "HOST" && ip !== hostIp) throw new Error("Not your turn");
-    if (currentTurn === "GUEST" && ip !== guestIp) throw new Error("Not your turn");
-
-    // Validate move
-    if (move < 1 || move > 9) throw new Error("Move must be 1-9");
-    const index = move - 1;
-    if (board[index]) throw new Error("Cell already taken");
-
-    // Apply move
-    board[index] = currentTurn === "HOST" ? "X" : "O";
+    validateMove(move);
+    applyMove(move)
 
     // Check winner/draw
     const winner = checkWinner();
     const isDraw = !winner && board.every(cell => cell !== null);
 
     const result: any = {
-        board,
-        move,
+        board: board,
+        move: move,
         by: currentTurn,
         nextTurn: null,
         winner: null,
         isDraw: false,
-        gameOver: false,
+        isGameOver: false,
     };
 
     if (winner) {
+
         result.winner = currentTurn;
-        result.gameOver = true;
-        gameOver = true;
+        result.isGameOver= true;
+        isGameOver = true;
+
     } else if (isDraw) {
+
         result.isDraw = true;
-        result.gameOver = true;
-        gameOver = true;
+        result.isGameOver = true;
+        isGameOver = true;
+
     } else {
         currentTurn = currentTurn === "HOST" ? "GUEST" : "HOST";
         result.nextTurn = currentTurn;

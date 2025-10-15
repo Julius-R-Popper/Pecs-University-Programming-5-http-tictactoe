@@ -1,14 +1,18 @@
 
-import {setGameAddress, setRoomRole, setUserIdentifierIp, terminal} from "./state.js";
-import { gameService } from "./gameService.js";
+import {setGameAddress, setRoomRole, state, terminal} from "./state.js";
+import {establishServerEventListener} from "./EventListeners/serverEventListener.js";
+import {establishGameEventListener} from "./EventListeners/gameEventListener.js";
+
 
 const rl = terminal;
 let inRoom = false;
 
 async function handleGameOrMenu(){
     if(inRoom){
-        await gameService();
+        await establishServerEventListener();
+        await establishGameEventListener();
         inRoom = false;
+        console.log("Disconnected from the game server.")
     }
     mainMenu();
 }
@@ -49,14 +53,12 @@ async function hostRoom() {
         const res = await fetch("http://localhost:4000/host", {
             method: "POST"
         });
-        const data = await res.json();
-        console.log("Room hosted:", data);
+        const hostRoomData = await res.json();
+        console.log("Room hosted:", hostRoomData);
         inRoom = true;
         setRoomRole("HOST");
-        console.log(data.identifierIp);
-        setUserIdentifierIp(data.identifierIp);
-        console.log(`Address set to ${data.roomIp}:${data.roomPort} for play`);
-        setGameAddress(`${data.roomIp}:${data.roomPort}`)
+        console.log(`Address set to ${hostRoomData.roomIp}:${hostRoomData.roomPort} for play`);
+        setGameAddress(`${hostRoomData.roomIp}:${hostRoomData.roomPort}`);
     } catch (err) {
         console.error("Error hosting room:", err.message);
     }
@@ -93,10 +95,9 @@ async function joinRoomManually() {
         console.log("Joined room:", data);
         inRoom = true;
         setRoomRole("GUEST");
-        console.log(data.identifierIp);
-        setUserIdentifierIp(data.identifierIp);
         console.log(`Address set to ${data.roomIp}:${data.roomPort} for play`);
-        setGameAddress(`${data.roomIp}:${data.roomPort}`)
+        setGameAddress(`${data.roomIp}:${data.roomPort}`);
+
     } catch (err) {
         console.error("Error joining room:", err.message);
     }

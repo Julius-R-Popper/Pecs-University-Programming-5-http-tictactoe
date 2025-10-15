@@ -1,8 +1,10 @@
 import readline from "readline";
 
-let RoomRole;
-let UserIdentifierIp;
-let GameAddress;
+export const state = {
+    RoomRole: null,
+    GameAddress: null,
+    SocketConnection: null
+}
 
 export const terminal = readline.createInterface({
     input: process.stdin,
@@ -10,34 +12,29 @@ export const terminal = readline.createInterface({
     terminal: true
 });
 
+export function setRoomRole(role) {
+    state.RoomRole = role;
+}
+
 export function getRoomRole() {
-    return RoomRole;
+    return state.RoomRole;
 }
 
-export function setRoomRole(roomRole) {
-    RoomRole = roomRole;
+export function setGameAddress(address) {
+    state.GameAddress = address;
 }
-
-export function getUserIdentifierIp() {
-    return UserIdentifierIp;
-}
-
-export function setUserIdentifierIp(userIdentifierIp) {
-    UserIdentifierIp = userIdentifierIp;
-}
-
 
 export function getGameAddress() {
-    return GameAddress;
+    return state.GameAddress;
 }
 
-export function setGameAddress(gameAddress) {
-    GameAddress = gameAddress;
+export function setSocketConnection(socket) {
+    state.SocketConnection = socket;
 }
 
-export function clearAll(){
-    GameAddress = null;
-    UserIdentifierIp = null;
-    RoomRole = null;
+export function getSocketConnection() {
+    return state.SocketConnection;
 }
+
+
 

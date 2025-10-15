@@ -9,23 +9,37 @@ import getPort from "get-port";
 const router = Router();
 
 
-
 router.post("/", async (req, res) => {
     try{
-        const gamePort = await getPort({ port: 3001 });
+
+        const gamePort = await getPort();
+        const rulesetPort = await getPort();
 
         const roomId = randomUUID().slice(0, 3);
 
         const hostIp = getLocalLanIp();
 
-        const identifierIp = randomUUID().slice(0, 3);//getLocalLanIp();
+        const identifierId = randomUUID().slice(0, 3);//getLocalLanIp();
 
-        const child = spawn(
+        console.log("game port on", gamePort.toString())
+        console.log("ruleset port on", rulesetPort.toString())
+
+        const gameProcess = spawn(
             "node",
             ["-r", "ts-node/register", "src/index.ts"],
             {
                 cwd: "../game",
-                env: { ...process.env, PORT: gamePort.toString(), HOST: hostIp },
+                env: { ...process.env, PORT: gamePort.toString(), HOST: hostIp, RULESET_PORT: rulesetPort.toString() },
+                stdio: "inherit",
+            }
+        );
+
+        const rulesetProcess = spawn(
+            "node",
+            ["-r", "ts-node/register", "src/index.ts"],
+            {
+                cwd: "../ruleset",
+                env: { ...process.env, PORT: rulesetPort.toString(), HOST: hostIp },
                 stdio: "inherit",
             }
         );
@@ -34,8 +48,9 @@ router.post("/", async (req, res) => {
             roomId: roomId,
             roomIp: hostIp,
             roomPort: gamePort,
-            process: child,
-            identifierIp: identifierIp//hostIp
+            gameProcess: gameProcess,
+            rulesetProcess: rulesetProcess,
+            identifierId: identifierId
         })
 
         startAdvertising(roomId, gamePort, hostIp);
@@ -45,7 +60,7 @@ router.post("/", async (req, res) => {
             roomId: roomId,
             roomPort: gamePort,
             roomIp: hostIp,
-            identifierIp: identifierIp
+            identifierId: identifierId
         });
 
     } catch (error) {

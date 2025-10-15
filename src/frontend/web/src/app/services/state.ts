@@ -1,44 +1,41 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
+import { Socket } from 'socket.io-client';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StateService {
-  private roomRole: 'HOST' | 'GUEST' | null = null;
-  private userIdentifierIp: string | null = null;
-  private gameAddress: string | null = null;
-
-  // Room Role
-  getRoomRole(): 'HOST' | 'GUEST' | null {
-    return this.roomRole;
-  }
+  readonly roomRole = signal<'HOST' | 'GUEST' | null>(null);
+  readonly gameAddress = signal<string | null>(null);
+  readonly socketConnection = signal<Socket | null>(null);
 
   setRoomRole(role: 'HOST' | 'GUEST') {
-    this.roomRole = role;
+    this.roomRole.set(role);
   }
 
-  // User Identifier IP
-  getUserIdentifierIp(): string | null {
-    return this.userIdentifierIp;
-  }
-
-  setUserIdentifierIp(ip: string) {
-    this.userIdentifierIp = ip;
-  }
-
-  // Game Address
-  getGameAddress(): string | null {
-    return this.gameAddress;
+  getRoomRole() {
+    return this.roomRole();
   }
 
   setGameAddress(address: string) {
-    this.gameAddress = address;
+    this.gameAddress.set(address);
   }
 
-  // Clear all state
+  getGameAddress() {
+    return this.gameAddress();
+  }
+
+  setSocketConnection(socket: Socket) {
+    this.socketConnection.set(socket);
+  }
+
+  getSocketConnection() {
+    return this.socketConnection();
+  }
+
   clearAll() {
-    this.roomRole = null;
-    this.userIdentifierIp = null;
-    this.gameAddress = null;
+    this.roomRole.set(null);
+    this.gameAddress.set(null);
+    this.socketConnection.set(null);
   }
 }
