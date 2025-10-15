@@ -24,7 +24,7 @@ const PORT = Number(process.env.PORT) || 3002;
 const HOST = process.env.HOST || "0.0.0.0";
 
 server.listen(PORT, HOST, () => {
-    console.log(`Game service running on https://${HOST}:${PORT}`);
+    console.log(`Ruleset service running on https://${HOST}:${PORT}`);
 });
 
 

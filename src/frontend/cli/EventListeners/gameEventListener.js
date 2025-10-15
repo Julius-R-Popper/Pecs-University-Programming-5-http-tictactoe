@@ -59,8 +59,6 @@ export async function establishGameEventListener(){
 
         getSocketConnection().on("move-success", async (gameStatus) => {
 
-
-
             if(gameStatus.isGameOver){
                 console.log("\n\n\n\n\n\n\n\n\n=== Game over! ===");
                 if(gameStatus.winner) console.log(`Winner: ${gameStatus.winner}`);

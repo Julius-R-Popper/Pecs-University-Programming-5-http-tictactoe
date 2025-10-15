@@ -30,7 +30,6 @@ export class MainMenu {
       console.log('Room hosted:', data);
       this.inRoom = true;
       this.state.setRoomRole('HOST');
-      this.state.setUserIdentifierIp(data.identifierIp);
       this.state.setGameAddress(`${data.roomIp}:${data.roomPort}`);
 
       await this.router.navigate(['/lobby']);
@@ -60,15 +59,13 @@ export class MainMenu {
 
 
   async joinRoomManually() {
-    // Trim inputs to remove accidental whitespace
     const roomId = this.roomIdInput?.trim();
     const roomIp = this.roomIpInput?.trim();
     const roomPort = this.roomPortInput;
 
-    // Check if any field is missing
     if (!roomId || !roomIp || !roomPort) {
       alert('All fields (Room ID, IP, Port) are required.');
-      return; // stop the function early
+      return;
     }
 
     try {
@@ -87,7 +84,6 @@ export class MainMenu {
       console.log('Joined room:', data);
       this.inRoom = true;
       this.state.setRoomRole('GUEST');
-      this.state.setUserIdentifierIp(data.identifierIp);
       this.state.setGameAddress(`${data.roomIp}:${data.roomPort}`);
 
       // Navigate to game

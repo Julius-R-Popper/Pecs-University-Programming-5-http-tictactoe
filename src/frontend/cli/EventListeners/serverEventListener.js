@@ -37,9 +37,10 @@ export async function establishServerEventListener() {
             //console.log("Disconnected from game server");
 
             getSocketConnection().off();
-            getSocketConnection().close();
+            getSocketConnection().disconnect();
             setSocketConnection(null);
 
+            if(getRoomRole() === "HOST")
             await endGameServer();
 
             setGameAddress(null);
