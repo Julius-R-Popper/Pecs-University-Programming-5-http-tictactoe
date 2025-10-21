@@ -36,6 +36,7 @@
     "install:cli": "cd frontend/cli && npm install",
     "install:web": "cd frontend/web && npm install",
     "install:root": "npm install",
+    "install:ruleset": "cd services/ruleset && npm install",
     "install:all": "npm-run-all --sequential install:game install:room install:cli install:web install:root",
 
 
